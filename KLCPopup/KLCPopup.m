@@ -192,12 +192,14 @@ const KLCPopupLayout KLCPopupLayoutCenter = { KLCPopupHorizontalLayoutCenter, KL
 
 
 + (void)dismissAllPopups {
+#if TARGET_OS_IPHONE
   NSArray* windows = [[UIApplication sharedApplication] windows];
   for (UIWindow* window in windows) {
     [window forEachPopupDoBlock:^(KLCPopup *popup) {
       [popup dismiss:NO];
     }];
   }
+#endif
 }
 
 
@@ -529,7 +531,8 @@ const KLCPopupLayout KLCPopupLayoutCenter = { KLCPopupHorizontalLayoutCenter, KL
     [self willStartShowing];
     
     dispatch_async( dispatch_get_main_queue(), ^{
-      
+
+#if TARGET_OS_IPHONE
       // Prepare by adding to the top window.
       if(!self.superview){
         NSEnumerator *frontToBackWindows = [[[UIApplication sharedApplication] windows] reverseObjectEnumerator];
@@ -542,6 +545,7 @@ const KLCPopupLayout KLCPopupLayoutCenter = { KLCPopupHorizontalLayoutCenter, KL
           }
         }
       }
+#endif
       
       // Before we calculate layout for containerView, make sure we are transformed for current orientation.
       [self updateForInterfaceOrientation];
@@ -998,8 +1002,8 @@ const KLCPopupLayout KLCPopupLayoutCenter = { KLCPopupHorizontalLayoutCenter, KL
   
   // We must manually fix orientation prior to iOS 8
   if (([[[UIDevice currentDevice] systemVersion] compare:@"8.0" options:NSNumericSearch] == NSOrderedAscending)) {
-
-    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+#if TARGET_OS_IPHONE
+      UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
     CGFloat angle;
     
     switch (orientation) {
@@ -1023,6 +1027,7 @@ const KLCPopupLayout KLCPopupLayoutCenter = { KLCPopupHorizontalLayoutCenter, KL
   }
 
   self.frame = self.window.bounds;
+#endif    
 }
 
 
